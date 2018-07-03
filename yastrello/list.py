@@ -24,40 +24,41 @@
 
 import json
 
-from board import yasTrelloBoard
 from conn import yasTrelloConn
-from list import yasTrelloList
-from utils import readAPICreds
 
 
-class yasTrelloApp:
+class yasTrelloList:
     """
-    yasTrello App class.
+    yasTrello List class.
     """
 
-    def __init__(self, board=None, list=None):
-        cred = readAPICreds()
-        self.conn = yasTrelloConn(cred['api_key'], cred['token'])
-        self.board = yasTrelloBoard(board, self.conn)
+    def __init__(self, id, name, idBoard, closed, conn=None):
+        self.id = id
+        self.name = name
+        self.closed = closed
+        self.idBoard = idBoard
+        self.conn = conn
 
-        # Based on Board's Lists, we check if one of them matches with the list
-        # the user inputed and create our List object here. Otherwise, we
-        # create a List on Trello and the List object.
-        self.list = None
-        for item in self.board.getBoardLists():
-            if (item['name'] == list):
-                self.list = yasTrelloList(item['id'], item['name'],
-                                          item['idBoard'], item['closed'])
-                break
-        if (not self.list):
-            print("No list called \"%s\" was found. Creating..." % list)
-            self.list = yasTrelloList(None, None, None, None)
+    def getListName(self):
+        return self.name
 
-    def getBoard(self):
-        return self.board
+    def getListId(self):
+        return self.id
 
-    def getList(self):
-        return self.list
+    def getListBoard(self):
+        return self.idBoard
+
+    def isListClosed(self):
+        return self.closed
+
+    def _getList(self, id=None):
+        if not id:
+            return {}
+
+        if (not self.conn):
+            return {}
+            
+        return json.loads(self.conn.execute('/lists/%s' % id))
 
 
 if __name__ == "__main__":

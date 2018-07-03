@@ -30,7 +30,7 @@ def usage():
     print("""yasTrello - yet another simple Trello app
 
 Usage:
-    yastrello <board>
+    yastrello <board> <list>
     yastrello -h | --help
     yastrello --version
 
@@ -43,19 +43,28 @@ def main(argv):
     if len(argv) < 2:
         usage()
         sys.exit(2)
-
-    if (argv[1] == "-h") or (argv[1] == "--help"):
-        usage()
-        sys.exit(0)
-    elif (argv[1] == "--version"):
-        print("yasTrello v0.1")
-        sys.exit(0)
+    elif len(argv) == 2:
+        if (argv[1] == "-h") or (argv[1] == "--help"):
+            usage()
+            sys.exit(0)
+        elif (argv[1] == "--version"):
+            print("yasTrello v0.1")
+            sys.exit(0)
+        else:
+            print("ERROR: Invalid sequence of arguments.")
+            print("Usage: yastrello <board> <list>")
+            sys.exit(2)
 
     # Read the arguments to create the card
-    app = yasTrelloApp(argv[1])
+    app = yasTrelloApp(argv[1], argv[2])
     board = app.getBoard()
-    print("Using board %s - ID: %s" % (board.getBoardName(),
-                                       board.getBoardId()))
+    if (not board.getBoardId()):
+        print("Using board %s - ID: %s" % (board.getBoardName(),
+                                           board.getBoardId()))
+    list = app.getList()
+    if (not list.getListId()):
+        print("Using list %s - ID: %s" % (list.getListName(),
+                                          list.getListId()))
 
 if __name__ == "__main__":
     main(sys.argv)
