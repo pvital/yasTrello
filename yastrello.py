@@ -23,6 +23,8 @@
 
 import sys
 
+from yastrello.app import yasTrelloApp
+
 
 def usage():
     print("""yasTrello - yet another simple Trello app
@@ -50,9 +52,10 @@ def main(argv):
         sys.exit(0)
 
     # Read the arguments to create the card
-    board = argv[1]
-    print("Using board: %s" % board)
-
+    app = yasTrelloApp(argv[1])
+    board = app.getBoard()
+    print("Using board %s - ID: %s" % (board.getBoardName(),
+                                       board.getBoardId()))
 
 if __name__ == "__main__":
     main(sys.argv)

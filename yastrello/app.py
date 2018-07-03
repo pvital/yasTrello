@@ -24,6 +24,7 @@
 
 import json
 
+from board import yasTrelloBoard
 from conn import yasTrelloConn
 from utils import readAPICreds
 
@@ -33,9 +34,13 @@ class yasTrelloApp:
     yasTrello App class.
     """
 
-    def __init__(self):
+    def __init__(self, board=None):
         cred = readAPICreds()
         self.conn = yasTrelloConn(cred['api_key'], cred['token'])
+        self.board = yasTrelloBoard(board, self.conn)
+
+    def getBoard(self):
+        return self.board
 
 
 if __name__ == "__main__":
