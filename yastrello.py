@@ -58,11 +58,11 @@ def main(argv):
     # Read the arguments to create the card
     app = yasTrelloApp(argv[1], argv[2])
     board = app.getBoard()
-    if (not board.getBoardId()):
+    if (board.getBoardId()):
         print("Using board %s - ID: %s" % (board.getBoardName(),
                                            board.getBoardId()))
     list = app.getList()
-    if (not list.getListId()):
+    if (list.getListId()):
         print("Using list %s - ID: %s" % (list.getListName(),
                                           list.getListId()))
 
