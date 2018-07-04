@@ -51,7 +51,8 @@ class yasTrelloApp:
                 break
         if (not self.list):
             print("No list called \"%s\" was found. Creating..." % list)
-            self.list = yasTrelloList(None, None, None, None)
+            self.list = yasTrelloList(None, list, self.board.getBoardId(),
+                                      None, self.conn)
 
     def getBoard(self):
         return self.board

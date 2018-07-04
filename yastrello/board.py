@@ -47,8 +47,18 @@ class yasTrelloBoard:
                     self.closed = True if board['closed'] == 'true' else False
                     self.labels = board['labelNames']
                     self.lists = self._getBoardLists()
-        if (not self.id):
-            print("No board called \"%s\" was found." % self.name)
+                    return
+
+            # Create a new Board everytime the id is None
+            if (not self.id):
+                params = {"name":name}
+                ret = json.loads(self.conn.post("/boards/", params))
+                if (ret):
+                    self.id = ret["id"]
+                    self.closed = ret["closed"]
+                    self.labels = ret['labelNames']
+                    self.lists = self._getBoardLists()
+                    return
 
     def getBoardName(self):
         return self.name

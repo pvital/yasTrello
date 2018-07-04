@@ -38,6 +38,13 @@ class yasTrelloList:
         self.closed = closed
         self.idBoard = idBoard
         self.conn = conn
+        # Create a new List everytime the id is None
+        if ((not self.id) and conn):
+            params = {"name":name, "idBoard":idBoard}
+            ret = json.loads(self.conn.post("/lists/", params))
+            if (ret):
+                self.id = ret["id"]
+                self.closed = ret["closed"]
 
     def getListName(self):
         return self.name
