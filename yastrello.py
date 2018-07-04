@@ -31,7 +31,7 @@ def usage():
     print("""yasTrello - yet another simple Trello app
 
 Usage:
-    yastrello -b <board> -l <list> -c <card_title_between_quotes>
+    yastrello -b <board> -l <list> -c <card_title_between_quotes> -a <label_between_quotes>
     yastrello -h | --help
     yastrello --version
 
@@ -39,6 +39,7 @@ Options:
     -b --board      Board name to use.
     -l --list       List name to use in the specified Board.
     -c --card       Card title (name) to create in the specified List.
+    -a --label      Label name to add in the specified Card. (optional)
     -h --help       Show this message.
     --version       Show version.
 """)
@@ -48,12 +49,16 @@ def main(argv):
         usage()
         sys.exit(2)
     else:
+        # Set all infomartion as NULL
         board = None
         list = None
         card = None
+        label = None
+
         # Process the arguments from command line
-        long_opts = ["board=", "list=", "card=", "help", "version"]
-        options, remainder = getopt.getopt(sys.argv[1:], "hb:l:c:", long_opts)
+        short_opts = "hb:l:c:a:"
+        long_opts = ["board=", "list=", "card=", "label=", "help", "version"]
+        options, remainder = getopt.getopt(sys.argv[1:], short_opts, long_opts)
         for opt, arg in options:
             if opt in ("-b", "--board"):
                 board = arg
@@ -61,6 +66,8 @@ def main(argv):
                 list = arg
             if opt in ("-c", "--card"):
                 card = arg
+            if opt in ("-a", "--label"):
+                label = arg
             elif opt in ("-h", "--help"):
                 usage()
                 sys.exit(0)
@@ -74,7 +81,7 @@ def main(argv):
         usage()
         sys.exit(2)
 
-    app = yasTrelloApp(board, list, card)
+    app = yasTrelloApp(board, list, card, label)
     board = app.getBoard()
     if (board.getBoardId()):
         print("Using board %s - ID: %s" % (board.getBoardName(),

@@ -27,6 +27,7 @@ import json
 from board import yasTrelloBoard
 from card import yasTrelloCard
 from conn import yasTrelloConn
+from label import yasTrelloLabel
 from list import yasTrelloList
 from utils import readAPICreds
 
@@ -36,10 +37,26 @@ class yasTrelloApp:
     yasTrello App class.
     """
 
-    def __init__(self, board=None, list=None, card=None):
+    def __init__(self, board=None, list=None, card=None, label=None):
         cred = readAPICreds()
         self.conn = yasTrelloConn(cred['api_key'], cred['token'])
         self.board = yasTrelloBoard(board, self.conn)
+
+        # Handle label
+        self.label = None
+        if (label):
+            for labelName in self.board.getBoardLabels().values():
+                if (labelName == label):
+                    # Board already has a label with this name.
+                    labelId = self.board.getBoardLabelId(label)
+                    if (labelId):
+                        self.label = yasTrelloLabel(labelId, label,
+                                                    self.board.getBoardId())
+                        break
+            if (not self.label):
+                self.label = yasTrelloLabel(None, label,
+                                            self.board.getBoardId(),
+                                            'null', self.conn)
 
         # Based on Board's Lists, we check if one of them matches with the list
         # the user inputed and create our List object here. Otherwise, we
@@ -48,7 +65,8 @@ class yasTrelloApp:
         for item in self.board.getBoardLists():
             if (item['name'] == list):
                 self.list = yasTrelloList(item['id'], item['name'],
-                                          item['idBoard'], item['closed'])
+                                          item['idBoard'], item['closed'],
+                                          self.conn)
                 break
         if (not self.list):
             print("No list called \"%s\" was found. Creating..." % list)
@@ -61,7 +79,7 @@ class yasTrelloApp:
             if (item['name'] == card):
                 self.card = yasTrelloCard(item['id'], item['name'],
                                           item['idBoard'], item['idList'],
-                                          item['closed'])
+                                          item['closed'], self.conn)
                 break
         if (not self.card):
             print("No card exists with this title. Creating...")

@@ -27,53 +27,51 @@ import json
 from conn import yasTrelloConn
 
 
-class yasTrelloCard:
+LABEL_COLORS = ['yellow', 'purple', 'blue', 'red', 'green', 'orange',
+                'black', 'sky', 'pink', 'lime']
+
+class yasTrelloLabel:
     """
-    yasTrello Card class.
+    yasTrello Label class.
     """
 
-    def __init__(self, id, name, idBoard, idList, closed, conn=None):
+    def __init__(self, id, name, idBoard, color=None, conn=None):
         self.conn = conn
         self.id = id
         self.name = name
-        self.closed = closed
         self.idBoard = idBoard
-        self.idList = idList
-        self.idLabels = self._getIdLabels()
-        # Create a new Card everytime the id is None
+        # Check if color inputed is a valid one, otherwise set as null
+        self.color = (color if color in LABEL_COLORS else 'null') if color \
+                     else 'null'
+
+        # Create a new Label everytime the id is None
         if ((not self.id) and conn):
-            params = {"name":name, "idList":idList}
-            ret = json.loads(self.conn.post("/cards/", params))
+            params = {"name":name, "idBoard":idBoard, "color": self.color}
+            ret = json.loads(self.conn.post("/labels/", params))
             if (ret):
                 self.id = ret["id"]
-                self.closed = ret["closed"]
+                self.color = ret["color"]
 
-    def getCardName(self):
+    def getLabelName(self):
         return self.name
 
-    def getCardId(self):
+    def getLabelId(self):
         return self.id
 
-    def getCardBoard(self):
+    def getLabelBoard(self):
         return self.idBoard
 
-    def getCardList(self):
-        return self.idList
+    def getLabelColor(self):
+        return self.color
 
-    def isCardClosed(self):
-        return self.closed
-
-    def _getCard(self, id=None):
+    def _getLabel(self, id=None):
         if not id:
             return {}
 
         if (not self.conn):
             return {}
 
-        return json.loads(self.conn.get('/cards/%s' % id))
-
-    def _getIdLabels(self):
-        return json.loads(self.conn.get('/cards/%s?fields=idLabels' % self.id))
+        return json.loads(self.conn.execute('/labels/%s' % id))
 
 
 if __name__ == "__main__":

@@ -87,6 +87,13 @@ class yasTrelloBoard:
     def _getBoardLists(self):
         return json.loads(self.conn.get('/boards/%s/lists/' % self.id))
 
+    def getBoardLabelId(self, name):
+        labels = json.loads(self.conn.get('/boards/%s/labels/'))
+        for label in labels:
+            if (label['name'] == name):
+                return label['id']
+        return None
+
 
 if __name__ == "__main__":
     print
