@@ -39,7 +39,7 @@ class yasTrelloConn:
         self.api_key = api_key
         self.token = token
 
-    def execute(self, uri_path, http_method='GET'):
+    def execute(self, uri_path, query_params={}, http_method="GET"):
         """
         Wrapper to execute a request to Trello and execute an operation
 
@@ -62,7 +62,6 @@ class yasTrelloConn:
         url = 'https://api.trello.com/1/%s' % uri_path
 
         # set parameters to send in url
-        query_params = {}
         query_params['key'] = self.api_key
         query_params['token'] = self.token
 
@@ -76,6 +75,22 @@ class yasTrelloConn:
 
         return response.text
 
+    def get(self, uri_path):
+        """
+        Wrapper to execute a GET request to Trello
+
+        :uri_path:      endpoint to request the service
+        """
+        return self.execute(uri_path, http_method="GET")
+
+    def post(self, uri_path, query_params):
+        """
+        Wrapper to execute a POST request to Trello
+
+        :uri_path:      endpoint to request the service
+        :query_params:  dictionary containing the parameters to send in POST
+        """
+        return self.execute(uri_path, query_params, "POST")
 
 if __name__ == "__main__":
     print

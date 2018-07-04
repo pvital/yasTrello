@@ -57,8 +57,8 @@ class yasTrelloList:
 
         if (not self.conn):
             return {}
-            
-        return json.loads(self.conn.execute('/lists/%s' % id))
+
+        return json.loads(self.conn.get('/lists/%s' % id))
 
 
 if __name__ == "__main__":

@@ -66,16 +66,16 @@ class yasTrelloBoard:
         return self.closed
 
     def _getBoards(self):
-        return json.loads(self.conn.execute('/members/me/boards/'))
+        return json.loads(self.conn.get('/members/me/boards/'))
 
     def _getBoard(self, id=None):
         if not id:
             return {}
 
-        return json.loads(self.conn.execute('/boards/%s' % id))
+        return json.loads(self.conn.get('/boards/%s' % id))
 
     def _getBoardLists(self):
-        return json.loads(self.conn.execute('/boards/%s/lists/' % self.id))
+        return json.loads(self.conn.get('/boards/%s/lists/' % self.id))
 
 
 if __name__ == "__main__":
