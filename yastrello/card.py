@@ -86,6 +86,13 @@ class yasTrelloCard:
         if (ret):
             return ret[0]
 
+    def addCommentToCard(self, comment):
+        params = {"text": comment}
+        ret = json.loads(self.conn.post('/cards/%s/actions/comments/' % self.id,
+                                         params))
+        if (ret):
+            return ret
+
 
 if __name__ == "__main__":
     print

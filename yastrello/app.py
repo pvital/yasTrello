@@ -37,7 +37,8 @@ class yasTrelloApp:
     yasTrello App class.
     """
 
-    def __init__(self, board=None, list=None, card=None, label=None):
+    def __init__(self, board=None, list=None, card=None, label=None,
+                 comment=None):
         cred = readAPICreds()
         self.conn = yasTrelloConn(cred['api_key'], cred['token'])
         self.board = yasTrelloBoard(board, self.conn)
@@ -88,6 +89,10 @@ class yasTrelloApp:
             self.card = yasTrelloCard(None, card, self.board.getBoardId(),
                                       self.list.getListId(), None, labelid,
                                       self.conn)
+
+        # Handle comment
+        if (comment):
+            self.card.addCommentToCard(comment)
 
     def getBoard(self):
         return self.board
