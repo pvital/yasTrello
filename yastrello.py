@@ -74,7 +74,7 @@ def main(argv):
         usage()
         sys.exit(2)
 
-    app = yasTrelloApp(board, list)
+    app = yasTrelloApp(board, list, card)
     board = app.getBoard()
     if (board.getBoardId()):
         print("Using board %s - ID: %s" % (board.getBoardName(),
@@ -84,7 +84,10 @@ def main(argv):
         print("Using list %s - ID: %s" % (list.getListName(),
                                           list.getListId()))
 
-    print("Using card %s - ID: %s" % (card, None))
+    card = app.getCard()
+    if (card.getCardId()):
+        print("Using card %s - ID: %s" % (card.getCardName(),
+                                          card.getCardId()))
 
 if __name__ == "__main__":
     main(sys.argv)

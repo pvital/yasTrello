@@ -25,6 +25,7 @@
 import json
 
 from board import yasTrelloBoard
+from card import yasTrelloCard
 from conn import yasTrelloConn
 from list import yasTrelloList
 from utils import readAPICreds
@@ -35,7 +36,7 @@ class yasTrelloApp:
     yasTrello App class.
     """
 
-    def __init__(self, board=None, list=None):
+    def __init__(self, board=None, list=None, card=None):
         cred = readAPICreds()
         self.conn = yasTrelloConn(cred['api_key'], cred['token'])
         self.board = yasTrelloBoard(board, self.conn)
@@ -54,11 +55,27 @@ class yasTrelloApp:
             self.list = yasTrelloList(None, list, self.board.getBoardId(),
                                       None, self.conn)
 
+        # Handle Card information
+        self.card = None
+        for item in self.list.getListCards():
+            if (item['name'] == card):
+                self.card = yasTrelloCard(item['id'], item['name'],
+                                          item['idBoard'], item['idList'],
+                                          item['closed'])
+                break
+        if (not self.card):
+            print("No card exists with this title. Creating...")
+            self.card = yasTrelloCard(None, card, self.board.getBoardId(),
+                                      self.list.getListId(), None, self.conn)
+
     def getBoard(self):
         return self.board
 
     def getList(self):
         return self.list
+
+    def getCard(self):
+        return self.card
 
 
 if __name__ == "__main__":

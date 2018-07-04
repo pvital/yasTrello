@@ -27,53 +27,49 @@ import json
 from conn import yasTrelloConn
 
 
-class yasTrelloList:
+class yasTrelloCard:
     """
-    yasTrello List class.
+    yasTrello Card class.
     """
 
-    def __init__(self, id, name, idBoard, closed, conn=None):
+    def __init__(self, id, name, idBoard, idList, closed, conn=None):
+        self.conn = conn
         self.id = id
         self.name = name
         self.closed = closed
         self.idBoard = idBoard
-        self.cards = self._getListCards() if conn else []
-        self.conn = conn
+        self.idList = idList
         # Create a new List everytime the id is None
         if ((not self.id) and conn):
-            params = {"name":name, "idBoard":idBoard}
-            ret = json.loads(self.conn.post("/lists/", params))
+            params = {"name":name, "idList":idList}
+            ret = json.loads(self.conn.post("/cards/", params))
             if (ret):
                 self.id = ret["id"]
                 self.closed = ret["closed"]
-                self.cards = self._getListCards()
 
-    def getListName(self):
+    def getCardName(self):
         return self.name
 
-    def getListId(self):
+    def getCardId(self):
         return self.id
 
-    def getListBoard(self):
+    def getCardBoard(self):
         return self.idBoard
 
-    def getListCards(self):
-        return self.cards
+    def getCardList(self):
+        return self.idList
 
-    def isListClosed(self):
+    def isCardClosed(self):
         return self.closed
 
-    def _getList(self, id=None):
+    def _getCard(self, id=None):
         if not id:
             return {}
 
         if (not self.conn):
             return {}
 
-        return json.loads(self.conn.get('/lists/%s' % id))
-
-    def _getListCards(self):
-        return json.loads(self.conn.get('/lists/%s/cards/' % self.id))
+        return json.loads(self.conn.execute('/cards/%s' % id))
 
 
 if __name__ == "__main__":
