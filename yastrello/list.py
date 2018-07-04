@@ -38,7 +38,7 @@ class yasTrelloList:
         self.closed = closed
         self.idBoard = idBoard
         self.conn = conn
-        self.cards = self._getListCards() if conn else []
+        self.cards = self._getListCards() if (conn and self.id) else []
         # Create a new List everytime the id is None
         if ((not self.id) and conn):
             params = {"name":name, "idBoard":idBoard}

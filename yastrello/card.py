@@ -40,7 +40,8 @@ class yasTrelloCard:
         self.closed = closed
         self.idBoard = idBoard
         self.idList = idList
-        self.idLabels = self._getIdLabels()['idLabels']
+        self.idLabels = self._getIdLabels()['idLabels'] if (conn and self.id) \
+                        else []
         # Create a new Card everytime the id is None
         if ((not self.id) and conn):
             params = {"name":name, "idList":idList}
