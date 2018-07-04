@@ -77,14 +77,17 @@ class yasTrelloApp:
         self.card = None
         for item in self.list.getListCards():
             if (item['name'] == card):
+                labelid = self.label.getLabelId() if self.label else None
                 self.card = yasTrelloCard(item['id'], item['name'],
                                           item['idBoard'], item['idList'],
-                                          item['closed'], self.conn)
+                                          item['closed'], labelid, self.conn)
                 break
         if (not self.card):
             print("No card exists with this title. Creating...")
+            labelid = self.label.getLabelId() if self.label else None
             self.card = yasTrelloCard(None, card, self.board.getBoardId(),
-                                      self.list.getListId(), None, self.conn)
+                                      self.list.getListId(), None, labelid,
+                                      self.conn)
 
     def getBoard(self):
         return self.board

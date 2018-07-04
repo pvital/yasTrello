@@ -32,14 +32,15 @@ class yasTrelloCard:
     yasTrello Card class.
     """
 
-    def __init__(self, id, name, idBoard, idList, closed, conn=None):
+    def __init__(self, id, name, idBoard, idList, closed, idLabel=None,
+                 conn=None):
         self.conn = conn
         self.id = id
         self.name = name
         self.closed = closed
         self.idBoard = idBoard
         self.idList = idList
-        self.idLabels = self._getIdLabels()
+        self.idLabels = self._getIdLabels()['idLabels']
         # Create a new Card everytime the id is None
         if ((not self.id) and conn):
             params = {"name":name, "idList":idList}
@@ -47,6 +48,9 @@ class yasTrelloCard:
             if (ret):
                 self.id = ret["id"]
                 self.closed = ret["closed"]
+        # Add label to the card is inputed
+        if (idLabel) and (idLabel not in self.idLabels):
+            self.idLabels.append(self.addLabelToCard(idLabel))
 
     def getCardName(self):
         return self.name
@@ -74,6 +78,13 @@ class yasTrelloCard:
 
     def _getIdLabels(self):
         return json.loads(self.conn.get('/cards/%s?fields=idLabels' % self.id))
+
+    def addLabelToCard(self, idLabel):
+        params = {"value": idLabel}
+        ret = json.loads(self.conn.post('/cards/%s/idLabels/' % self.id,
+                                         params))
+        if (ret):
+            return ret[0]
 
 
 if __name__ == "__main__":
