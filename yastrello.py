@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import getopt
 import sys
 
 from yastrello.app import yasTrelloApp
@@ -30,11 +31,14 @@ def usage():
     print("""yasTrello - yet another simple Trello app
 
 Usage:
-    yastrello <board> <list>
+    yastrello -b <board> -l <list> -c <card_title_between_quotes>
     yastrello -h | --help
     yastrello --version
 
 Options:
+    -b --board      Board name to use.
+    -l --list       List name to use in the specified Board.
+    -c --card       Card title (name) to create in the specified List.
     -h --help       Show this message.
     --version       Show version.
 """)
@@ -43,20 +47,34 @@ def main(argv):
     if len(argv) < 2:
         usage()
         sys.exit(2)
-    elif len(argv) == 2:
-        if (argv[1] == "-h") or (argv[1] == "--help"):
-            usage()
-            sys.exit(0)
-        elif (argv[1] == "--version"):
-            print("yasTrello v0.1")
-            sys.exit(0)
-        else:
-            print("ERROR: Invalid sequence of arguments.")
-            print("Usage: yastrello <board> <list>")
-            sys.exit(2)
+    else:
+        board = None
+        list = None
+        card = None
+        # Process the arguments from command line
+        long_opts = ["board=", "list=", "card=", "help", "version"]
+        options, remainder = getopt.getopt(sys.argv[1:], "hb:l:c:", long_opts)
+        for opt, arg in options:
+            if opt in ("-b", "--board"):
+                board = arg
+            if opt in ("-l", "--list"):
+                list = arg
+            if opt in ("-c", "--card"):
+                card = arg
+            elif opt in ("-h", "--help"):
+                usage()
+                sys.exit(0)
+            elif opt == "--version":
+                print("yasTrello v0.1")
+                sys.exit(0)
 
     # Read the arguments to create the card
-    app = yasTrelloApp(argv[1], argv[2])
+    if ((not board) or (not list) or (not card)):
+        print("ERROR: missing arguments.")
+        usage()
+        sys.exit(2)
+
+    app = yasTrelloApp(board, list)
     board = app.getBoard()
     if (board.getBoardId()):
         print("Using board %s - ID: %s" % (board.getBoardName(),
@@ -65,6 +83,8 @@ def main(argv):
     if (list.getListId()):
         print("Using list %s - ID: %s" % (list.getListName(),
                                           list.getListId()))
+
+    print("Using card %s - ID: %s" % (card, None))
 
 if __name__ == "__main__":
     main(sys.argv)
